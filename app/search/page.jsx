@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Box, Flex, Spinner, Text } from "@chakra-ui/react";
 import Property from "@/components/Property";
@@ -123,6 +123,23 @@ function SearchPage() {
   );
 }
 
+function SearchPageWrapper() {
+  return (
+    <Suspense
+      fallback={
+        <Box textAlign="center" alignContent="center" mt="4" h={"200px"}>
+          <Spinner size="xl" />
+          <Text mt="2" fontSize="2xl">
+            Loading page...
+          </Text>
+        </Box>
+      }
+    >
+      <SearchPage />
+    </Suspense>
+  );
+}
+
 const formStyles = {
   display: "flex",
   flexDirection: "column",
@@ -161,4 +178,4 @@ const buttonStyles = {
   transition: "background-color 0.3s",
 };
 
-export default SearchPage;
+export default SearchPageWrapper;
