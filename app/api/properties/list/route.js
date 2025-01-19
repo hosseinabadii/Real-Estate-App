@@ -2,6 +2,7 @@ const baseUrl = "https://bayut.p.rapidapi.com";
 
 const options = {
   cache: "force-cache",
+  next: { revalidate: 60 },
   method: "GET",
   headers: {
     "x-rapidapi-key": process.env.RAPIDAPI_KEY,
