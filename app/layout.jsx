@@ -15,7 +15,10 @@ export default function RootLayout({ children }) {
     <html suppressHydrationWarning>
       <body>
         <Provider>
-          <Box maxWidth={{ sm: "600px", md: "800px", lg: "1536px" }} mx="auto">
+          <Box
+            maxWidth={{ sm: "98%", md: "700px", lg: "1000px", xl: "1200px" }}
+            mx={{ sm: "2%", md: "auto" }}
+          >
             <header>
               <Navbar />
             </header>
