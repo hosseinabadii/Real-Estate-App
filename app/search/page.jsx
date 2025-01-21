@@ -97,28 +97,30 @@ function SearchPage() {
           </button>
         </form>
       </Box>
-      <Flex flexWrap="wrap" justifyContent="center">
-        {loading ? (
-          <Box textAlign="center" alignContent="center" mt="4" h={"200px"}>
-            <Spinner size="xl" />
-            <Text mt="2" fontSize="2xl">
-              Loading properties...
-            </Text>
-          </Box>
-        ) : error ? (
-          <Box textAlign="center" alignContent="center" mt="4" h={"200px"}>
-            <Text color="red.500">{error}</Text>
-          </Box>
-        ) : properties.length === 0 ? (
-          <Box textAlign="center" alignContent="center" mt="4" h={"200px"}>
-            <Text>No properties found for the selected filters.</Text>
-          </Box>
-        ) : (
-          properties.map((property) => (
-            <Property property={property} key={property.id} />
-          ))
-        )}
-      </Flex>
+      <Suspense fallback={<Spinner />}>
+        <Flex flexWrap="wrap" justifyContent="center">
+          {loading ? (
+            <Box textAlign="center" alignContent="center" mt="4" h={"200px"}>
+              <Spinner size="xl" />
+              <Text mt="2" fontSize="2xl">
+                Loading properties...
+              </Text>
+            </Box>
+          ) : error ? (
+            <Box textAlign="center" alignContent="center" mt="4" h={"200px"}>
+              <Text color="red.500">{error}</Text>
+            </Box>
+          ) : properties.length === 0 ? (
+            <Box textAlign="center" alignContent="center" mt="4" h={"200px"}>
+              <Text>No properties found for the selected filters.</Text>
+            </Box>
+          ) : (
+            properties.map((property) => (
+              <Property property={property} key={property.id} />
+            ))
+          )}
+        </Flex>
+      </Suspense>
     </Box>
   );
 }

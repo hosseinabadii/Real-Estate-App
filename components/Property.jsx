@@ -27,7 +27,7 @@ const Property = ({
     <Link href={`/property/${externalID}`} passHref>
       <Flex
         flexWrap="wrap"
-        w="300px"
+        w={["300px", "300px", "350px", "500px"]}
         p="5"
         paddingTop="0"
         justifyContent="flex-start"
@@ -36,7 +36,6 @@ const Property = ({
         <Box
           position="relative"
           width="100%"
-          maxWidth="300px"
           height="0"
           paddingBottom="65%"
           overflow="hidden"
