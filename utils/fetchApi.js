@@ -6,13 +6,6 @@ const defaultOptions = {
 export const fetchApi = async (endpoint, params, options = defaultOptions) => {
   const searchParams = new URLSearchParams(params);
   const url = `${baseURL}${endpoint}?${searchParams}`;
-  const properties = await fetch(url, options)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`status=${response.status}`);
-      }
-      return response.json();
-    })
-    .catch((error) => console.log("Error in fetchApi function", error));
-  return properties;
+  const response = await fetch(url, options);
+  return await response.json();
 };

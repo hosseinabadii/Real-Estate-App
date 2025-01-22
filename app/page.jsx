@@ -53,20 +53,20 @@ const Banner = ({
 );
 
 const Home = async () => {
-  const propertyForRent = await fetchApi("/properties/list", {
+  const propertyForRentResponse = await fetchApi("/properties/list", {
     locationExternalIDs: 5002,
     purpose: "for-rent",
     hitsPerPage: 6,
   });
 
-  const propertyForSale = await fetchApi("/properties/list", {
+  const propertyForSaleResponse = await fetchApi("/properties/list", {
     locationExternalIDs: 5002,
     purpose: "for-sale",
     hitsPerPage: 6,
   });
 
-  const propertiesForRent = propertyForRent?.hits;
-  const propertiesForSale = propertyForSale?.hits;
+  const propertiesForRent = propertyForRentResponse?.properties?.hits;
+  const propertiesForSale = propertyForSaleResponse?.properties?.hits;
 
   return (
     <Box>
@@ -81,11 +81,17 @@ const Home = async () => {
         imageUrl="https://bayut-production.s3.eu-central-1.amazonaws.com/image/145426814/33973352624c48628e41f2ec460faba4"
       />
       <Flex flexWrap="wrap" justifyContent="center">
-        {propertiesForRent &&
+        {propertyForRentResponse?.error ? (
+          <Text p="4" color="red.500">
+            {propertyForRentResponse?.error?.message}
+          </Text>
+        ) : (
+          propertiesForRent &&
           propertiesForRent.length > 0 &&
           propertiesForRent.map((property) => (
             <Property property={property} key={property.id} />
-          ))}
+          ))
+        )}
       </Flex>
       <Banner
         purpose="BUY A HOME"
@@ -98,11 +104,17 @@ const Home = async () => {
         imageUrl="https://bayut-production.s3.eu-central-1.amazonaws.com/image/110993385/6a070e8e1bae4f7d8c1429bc303d2008"
       />
       <Flex flexWrap="wrap" justifyContent="center">
-        {propertiesForSale &&
+        {propertyForSaleResponse?.error ? (
+          <Text p="4" color="red.500">
+            {propertyForSaleResponse?.error?.message}
+          </Text>
+        ) : (
+          propertiesForSale &&
           propertiesForSale.length > 0 &&
           propertiesForSale.map((property) => (
             <Property property={property} key={property.id} />
-          ))}
+          ))
+        )}
       </Flex>
     </Box>
   );

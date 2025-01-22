@@ -2,7 +2,16 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Box, Flex, Spinner, Text } from "@chakra-ui/react";
+import { Box, Flex, Spinner, Text, Button } from "@chakra-ui/react";
+import {
+  SelectContent,
+  SelectItem,
+  SelectLabel,
+  SelectRoot,
+  SelectTrigger,
+  SelectValueText,
+} from "@/components/ui/select";
+import { createListCollection } from "@chakra-ui/react";
 import Property from "@/components/Property";
 import { fetchApi } from "@/utils/fetchApi";
 import { filterData, getFilterValues } from "@/utils/filterData";
@@ -25,23 +34,22 @@ function SearchPage() {
   const fetchProperties = async () => {
     setLoading(true);
     setError(null);
-    try {
-      const values = getFilterValues(filters);
-      const params = values.reduce((acc, item) => {
-        if (item.value) acc[item.label] = item.value;
-        return acc;
-      }, {});
-      const newParams = {
-        ...params,
-        locationExternalIDs: 5002,
-      };
-      const data = await fetchApi("/properties/list", newParams);
-      setProperties(data?.hits || []);
-    } catch (err) {
-      setError("An error occurred while fetching properties.");
-    } finally {
-      setLoading(false);
+    const values = getFilterValues(filters);
+    const params = values.reduce((acc, item) => {
+      if (item.value) acc[item.label] = item.value;
+      return acc;
+    }, {});
+    const newParams = {
+      ...params,
+      locationExternalIDs: 5002,
+    };
+    const response = await fetchApi("/properties/list", newParams);
+    if (response?.error) {
+      setError(response?.error?.message);
+    } else {
+      setProperties(response?.properties?.hits || []);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -49,7 +57,7 @@ function SearchPage() {
   }, []);
 
   const handleFilterChange = (event, queryName) => {
-    const newValue = event.target.value;
+    const newValue = event.value;
     setFilters((prevFilters) => ({ ...prevFilters, [queryName]: newValue }));
     setQuery((prevQuery) => ({ ...prevQuery, [queryName]: newValue }));
   };
@@ -62,58 +70,69 @@ function SearchPage() {
 
   return (
     <Box>
-      <Box bg="gray.100" p="4" mb="4">
-        <form style={formStyles}>
+      <Box p="4" mb="4">
+        <form style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           <Flex flexWrap="wrap" gap="4" mb="4">
-            {filterData.map((filter) => (
-              <div key={filter.queryName} style={selectContainerStyles}>
-                <label htmlFor={filter.queryName} style={labelStyles}>
-                  {filter.placeholder}
-                </label>
-                <select
-                  id={filter.queryName}
-                  value={filters[filter.queryName]}
-                  onChange={(event) =>
+            {filterData.map((filter) => {
+              const collection = createListCollection({ items: filter.items });
+              return (
+                <SelectRoot
+                  maxWidth="200px"
+                  collection={collection}
+                  key={filter.queryName}
+                  defaultValue={filters[filter.queryName]}
+                  onValueChange={(event) =>
                     handleFilterChange(event, filter.queryName)
                   }
-                  style={selectStyles}
                 >
-                  <option value="">{filter.placeholder}</option>
-                  {filter.items.map((item) => (
-                    <option value={item.value} key={item.value}>
-                      {item.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ))}
+                  <SelectLabel fontWeight="bold">
+                    {filter.placeholder}
+                  </SelectLabel>
+                  <SelectTrigger>
+                    <SelectValueText placeholder={filter.placeholder} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {collection.items.map((item) => (
+                      <SelectItem item={item} key={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </SelectRoot>
+              );
+            })}
           </Flex>
-          <button
-            type="button"
-            onClick={handleApplyFilters}
-            style={buttonStyles}
-          >
+          <Button colorPalette="blue" onClick={handleApplyFilters}>
             Apply Filters
-          </button>
+          </Button>
         </form>
       </Box>
       <Suspense fallback={<Spinner />}>
         <Flex flexWrap="wrap" justifyContent="center">
           {loading ? (
-            <Box textAlign="center" alignContent="center" mt="4" h={"200px"}>
+            <Flex
+              h="200px"
+              alignItems="center"
+              justifyContent="center"
+              flexDirection="column"
+            >
               <Spinner size="xl" />
               <Text mt="2" fontSize="2xl">
                 Loading properties...
               </Text>
-            </Box>
+            </Flex>
           ) : error ? (
-            <Box textAlign="center" alignContent="center" mt="4" h={"200px"}>
-              <Text color="red.500">{error}</Text>
-            </Box>
+            <Flex h="200px" alignItems="center" justifyContent="center">
+              <Text fontSize="2xl" color="red.500">
+                {error}
+              </Text>
+            </Flex>
           ) : properties.length === 0 ? (
-            <Box textAlign="center" alignContent="center" mt="4" h={"200px"}>
-              <Text>No properties found for the selected filters.</Text>
-            </Box>
+            <Flex h="200px" alignItems="center" justifyContent="center">
+              <Text fontSize="2xl" color="yellow.500">
+                No properties found for the selected filters.
+              </Text>
+            </Flex>
           ) : (
             properties.map((property) => (
               <Property property={property} key={property.id} />
@@ -141,43 +160,5 @@ function SearchPageWrapper() {
     </Suspense>
   );
 }
-
-const formStyles = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "8px",
-};
-
-const selectContainerStyles = {
-  display: "flex",
-  flexDirection: "column",
-  minWidth: "150px",
-};
-
-const labelStyles = {
-  marginBottom: "4px",
-  fontSize: "14px",
-  fontWeight: "bold",
-  color: "#333",
-};
-
-const selectStyles = {
-  padding: "8px",
-  borderRadius: "4px",
-  border: "1px solid #ccc",
-  outline: "none",
-  fontSize: "14px",
-};
-
-const buttonStyles = {
-  padding: "10px 20px",
-  backgroundColor: "#3182ce",
-  color: "#fff",
-  border: "none",
-  borderRadius: "4px",
-  cursor: "pointer",
-  fontSize: "14px",
-  transition: "background-color 0.3s",
-};
 
 export default SearchPageWrapper;

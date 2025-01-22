@@ -1,66 +1,62 @@
 "use client";
 
-import { useContext } from "react";
+import React from "react";
 import Image from "next/image";
-import { Box, Icon, Flex } from "@chakra-ui/react";
-import { ScrollMenu, VisibilityContext } from "react-horizontal-scrolling-menu";
-import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from "react-icons/fa";
+import { Box } from "@chakra-ui/react";
 import { blurDataURL } from "@/utils/blurData";
-import "react-horizontal-scrolling-menu/dist/styles.css";
 
-const LeftArrow = () => {
-  const { scrollPrev } = useContext(VisibilityContext);
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
+export default function ImageScrollbar({ data }) {
+  var settings = {
+    dots: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          dots: true,
+        },
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          dots: false,
+        },
+      },
+    ],
+  };
   return (
-    <Flex justifyContent="center" alignItems="center" marginRight="1">
-      <Icon onClick={() => scrollPrev()} fontSize="2xl" cursor="pointer">
-        <FaArrowAltCircleLeft />
-      </Icon>
-    </Flex>
-  );
-};
-
-const RightArrow = () => {
-  const { scrollNext } = useContext(VisibilityContext);
-
-  return (
-    <Flex justifyContent="center" alignItems="center" marginLeft="1">
-      <Icon onClick={() => scrollNext()} fontSize="2xl" cursor="pointer">
-        <FaArrowAltCircleRight />
-      </Icon>
-    </Flex>
-  );
-};
-
-export default function ImageSrollbar({ data }) {
-  return (
-    <ScrollMenu
-      LeftArrow={LeftArrow}
-      RightArrow={RightArrow}
-      style={{ overflow: "hidden" }}
-    >
-      {data.map((item) => (
-        <Box
-          width={["400px", "700px", "1000px", "1200px"]}
-          height={["200px", "350px", "500px", "600px"]}
-          itemId={item.id}
-          overflow="hidden"
-          p="1"
-          key={item.id}
-          position="relative"
-        >
-          <Image
-            src={item.url}
-            alt="property"
-            placeholder="blur"
-            blurDataURL={blurDataURL}
-            priority={false}
-            fill
-            style={{ objectFit: "cover" }}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-        </Box>
-      ))}
-    </ScrollMenu>
+    <div className="slider-container">
+      <Slider {...settings}>
+        {data.map((item) => (
+          <Box
+            width={["400px", "700px", "800px", "1000px"]}
+            height={["200px", "350px", "400px", "500px"]}
+            itemId={item.id}
+            overflow="hidden"
+            p="1"
+            key={item.id}
+            position="relative"
+            bg="gray.100"
+          >
+            <Image
+              src={item.url}
+              alt="property"
+              placeholder="blur"
+              blurDataURL={blurDataURL}
+              priority={false}
+              fill
+              style={{ objectFit: "cover" }}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          </Box>
+        ))}
+      </Slider>
+    </div>
   );
 }

@@ -6,16 +6,23 @@ import { GoVerified } from "react-icons/go";
 import millify from "millify";
 
 import { fetchApi } from "@/utils/fetchApi";
-import ImageScrollbar from "../../../components/ImageScrollbar";
+import ImageScrollbar from "@/components/ImageScrollbar";
 
 const PropertyDetails = async ({ params }) => {
   const { id } = await params;
-  const propertyDetails = await fetchApi("/properties/detail", {
+
+  const response = await fetchApi("/properties/detail", {
     externalID: id,
   });
 
-  if (!propertyDetails) {
-    return <div>Property not found</div>;
+  if (response?.error) {
+    return (
+      <Flex minHeight="200px" alignItems="center" justifyContent="center">
+        <Text fontSize="2xl" color="red.500">
+          {response?.error?.message}
+        </Text>
+      </Flex>
+    );
   }
 
   const {
@@ -33,10 +40,10 @@ const PropertyDetails = async ({ params }) => {
     furnishingStatus,
     amenities,
     photos,
-  } = propertyDetails;
+  } = response.propertyDetails;
 
   return (
-    <Box maxWidth="1000px" margin="auto" p="4">
+    <Box margin="auto" p="4">
       {photos && <ImageScrollbar data={photos} />}
       <Box w="full" p="6">
         <Flex paddingTop="2" alignItems="center">

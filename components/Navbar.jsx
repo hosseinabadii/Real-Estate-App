@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { IconButton, Flex, Box, Spacer } from "@chakra-ui/react";
+import { ColorModeButton } from "./ui/color-mode";
 
 import {
   MenuRoot,
@@ -13,13 +14,19 @@ import { BsSearch } from "react-icons/bs";
 import { FiKey } from "react-icons/fi";
 
 const Navbar = () => (
-  <Flex p="2" borderBottom="2px solid" borderColor="gray.100">
+  <Flex
+    p="2"
+    borderBottom="2px solid"
+    borderColor="gray.100"
+    alignItems="center"
+  >
     <Box fontSize="3xl" color="blue.400" fontWeight="bold">
       <Link href="/" paddingleft="2">
         Real Estate App
       </Link>
     </Box>
     <Spacer />
+    <ColorModeButton />
     <MenuRoot>
       <MenuTrigger asChild>
         <IconButton variant="ghost">
