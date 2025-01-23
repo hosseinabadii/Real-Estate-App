@@ -1,7 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Flex, Box, Text, Button } from "@chakra-ui/react";
-import { fetchApi } from "../utils/fetchApi";
+import { fetchHandler } from "@/utils/fetchHandler";
+import CustomImage from "@/components/CustomImage";
 import Property from "../components/Property";
 
 const Banner = ({
@@ -22,14 +22,7 @@ const Banner = ({
     gap={5}
   >
     <Box width="500px" height="300px" position="relative">
-      <Image
-        src={imageUrl}
-        fill
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        style={{ objectFit: "cover" }}
-        alt="banner"
-        priority="false"
-      />
+      <CustomImage src={imageUrl} alt="banner" />
     </Box>
     <Box p="5">
       <Text color="gray.500" fontSize="sm" fontWeight="medium">
@@ -53,20 +46,20 @@ const Banner = ({
 );
 
 const Home = async () => {
-  const propertyForRentResponse = await fetchApi("/properties/list", {
+  const propertyForRentResponse = await fetchHandler("/properties/list", {
     locationExternalIDs: 5002,
     purpose: "for-rent",
     hitsPerPage: 6,
   });
 
-  const propertyForSaleResponse = await fetchApi("/properties/list", {
+  const propertyForSaleResponse = await fetchHandler("/properties/list", {
     locationExternalIDs: 5002,
     purpose: "for-sale",
     hitsPerPage: 6,
   });
 
-  const propertiesForRent = propertyForRentResponse?.properties?.hits;
-  const propertiesForSale = propertyForSaleResponse?.properties?.hits;
+  const propertiesForRent = propertyForRentResponse?.result?.hits;
+  const propertiesForSale = propertyForSaleResponse?.result?.hits;
 
   return (
     <Box>

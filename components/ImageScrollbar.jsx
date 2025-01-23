@@ -1,17 +1,16 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
-import { Box } from "@chakra-ui/react";
-import { blurDataURL } from "@/utils/blurData";
-
 import Slider from "react-slick";
+import { Box } from "@chakra-ui/react";
+import CustomImage from "./CustomImage";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 export default function ImageScrollbar({ data }) {
   var settings = {
     dots: true,
+    infinite: false,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
@@ -44,16 +43,7 @@ export default function ImageScrollbar({ data }) {
             position="relative"
             bg="gray.100"
           >
-            <Image
-              src={item.url}
-              alt="property"
-              placeholder="blur"
-              blurDataURL={blurDataURL}
-              priority={false}
-              fill
-              style={{ objectFit: "cover" }}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
+            <CustomImage src={item.url} alt="property" />
           </Box>
         ))}
       </Slider>

@@ -5,13 +5,13 @@ import { BsGridFill } from "react-icons/bs";
 import { GoVerified } from "react-icons/go";
 import millify from "millify";
 
-import { fetchApi } from "@/utils/fetchApi";
+import { fetchHandler } from "@/utils/fetchHandler";
 import ImageScrollbar from "@/components/ImageScrollbar";
 
 const PropertyDetails = async ({ params }) => {
   const { id } = await params;
 
-  const response = await fetchApi("/properties/detail", {
+  const response = await fetchHandler("/properties/detail", {
     externalID: id,
   });
 
@@ -40,7 +40,7 @@ const PropertyDetails = async ({ params }) => {
     furnishingStatus,
     amenities,
     photos,
-  } = response.propertyDetails;
+  } = response.result;
 
   return (
     <Box margin="auto" p="4">

@@ -1,3 +1,5 @@
+"use server";
+
 const baseUrl = "https://bayut.p.rapidapi.com";
 
 const options = {
@@ -9,13 +11,11 @@ const options = {
   },
 };
 
-export async function GET(request) {
-  const { pathname, search } = request.nextUrl;
-  const apiPath = pathname.replace("/api", "");
-  const apiURL = `${baseUrl}${apiPath}${search}`;
-
+export const fetchHandler = async (endpoint, params) => {
+  const query = new URLSearchParams(params);
+  const url = `${baseUrl}${endpoint}?${query}`;
   try {
-    const response = await fetch(apiURL, options);
+    const response = await fetch(url, options);
     const rateLimitRemaining = response.headers.get(
       "x-ratelimit-requests-remaining"
     );
@@ -25,21 +25,22 @@ export async function GET(request) {
       const errorResponse = {
         error: {
           status: response.status,
-          message: "Failed to fetch list of properties",
+          message: "Failed to fetch data",
         },
       };
-      return Response.json(errorResponse, { status: response.status });
+      console.log(errorResponse);
+      return errorResponse;
     }
 
-    const properties = await response.json();
+    const result = await response.json();
     const successResponse = {
       success: {
         status: 200,
-        message: "Successfully fetched list of properties",
+        message: "Successfully fetched data",
       },
-      properties,
+      result,
     };
-    return Response.json(successResponse, { status: 200 });
+    return successResponse;
   } catch (error) {
     const errorResponse = {
       error: {
@@ -47,6 +48,7 @@ export async function GET(request) {
         message: `Internal Server Error: ${error.message}`,
       },
     };
-    return Response.json(errorResponse, { status: 500 });
+    console.log(errorResponse);
+    return errorResponse;
   }
-}
+};

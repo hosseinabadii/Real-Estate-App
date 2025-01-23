@@ -1,13 +1,11 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Flex, Box, Text } from "@chakra-ui/react";
 import { Avatar } from "./ui/avatar";
 import { FaBed, FaBath } from "react-icons/fa";
 import { BsGridFill } from "react-icons/bs";
 import { GoVerified } from "react-icons/go";
 import millify from "millify";
-import defaultImage from "../public/images/house.jpg";
-import { blurDataURL } from "@/utils/blurData";
+import CustomImage from "./CustomImage";
 
 const Property = ({
   property: {
@@ -41,16 +39,7 @@ const Property = ({
           overflow="hidden"
           borderRadius="sm"
         >
-          <Image
-            src={coverPhoto ? coverPhoto?.url : defaultImage}
-            alt={title}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            style={{ objectFit: "cover" }}
-            priority={false}
-            placeholder="blur"
-            blurDataURL={blurDataURL}
-          />
+          <CustomImage src={coverPhoto?.url} alt={title} />
         </Box>
 
         <Box w="full">
